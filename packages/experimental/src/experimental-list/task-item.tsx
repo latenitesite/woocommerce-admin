@@ -31,8 +31,8 @@ type TaskItemProps = {
 	title: string;
 	completed: boolean;
 	onClick: () => void;
-	isDismissable?: boolean;
 	onDismiss?: () => void;
+	remindMeLater?: () => void;
 	additionalInfo?: string;
 	time?: string;
 	content?: string;
@@ -66,8 +66,8 @@ const OptionalTaskTooltip: React.FC< {
 export const TaskItem: React.FC< TaskItemProps > = ( {
 	completed,
 	title,
-	isDismissable,
 	onDismiss,
+	remindMeLater,
 	onClick,
 	additionalInfo,
 	time,
@@ -127,15 +127,46 @@ export const TaskItem: React.FC< TaskItemProps > = ( {
 					</Text>
 				</span>
 			</div>
-			{ onDismiss && isDismissable && ! completed && (
+			{ ( onDismiss || remindMeLater ) && ! completed && (
 				<EllipsisMenu
 					label={ __( 'Task List Options', 'woocommerce-admin' ) }
 					className="woocommerce-task-list__item-after"
+					onToggle={ ( e: React.MouseEvent | React.KeyboardEvent ) =>
+						e.stopPropagation()
+					}
 					renderContent={ () => (
 						<div className="woocommerce-task-card__section-controls">
-							<Button onClick={ () => onDismiss() }>
-								{ __( 'Dimiss', 'woocommerce-admin' ) }
-							</Button>
+							{ onDismiss && (
+								<Button
+									onClick={ (
+										e:
+											| React.MouseEvent
+											| React.KeyboardEvent
+									) => {
+										e.stopPropagation();
+										onDismiss();
+									} }
+								>
+									{ __( 'Dimiss', 'woocommerce-admin' ) }
+								</Button>
+							) }
+							{ remindMeLater && (
+								<Button
+									onClick={ (
+										e:
+											| React.MouseEvent
+											| React.KeyboardEvent
+									) => {
+										e.stopPropagation();
+										remindMeLater();
+									} }
+								>
+									{ __(
+										'Remind me later',
+										'woocommerce-admin'
+									) }
+								</Button>
+							) }
 						</div>
 					) }
 				/>

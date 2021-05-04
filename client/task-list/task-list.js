@@ -23,6 +23,7 @@ export const TaskList = ( {
 	name = 'task_list',
 	isComplete,
 	dismissedTasks,
+	remindMeLaterTasks,
 	tasks,
 	trackedCompletedTasks: totalTrackedCompletedTasks,
 	title: listTitle,
@@ -181,7 +182,7 @@ export const TaskList = ( {
 			task_name: key,
 		} );
 
-		const dimissTime = Date.now() + DAY_IN_MS;
+		const dismissTime = Date.now() + DAY_IN_MS;
 		updateOptions( {
 			woocommerce_task_list_remind_me_later_tasks: {
 				...remindMeLaterTasks,
@@ -194,7 +195,11 @@ export const TaskList = ( {
 	};
 
 	const undoRemindTaskLater = ( key ) => {
-		const { [ key ]: _, ...updatedRemindMeLaterTasks } = remindMeLaterTasks;
+		const {
+			// eslint-disable-next-line no-unused-vars
+			[ key ]: oldValue,
+			...updatedRemindMeLaterTasks
+		} = remindMeLaterTasks;
 
 		updateOptions( {
 			woocommerce_task_list_remind_me_later_tasks: updatedRemindMeLaterTasks,
@@ -202,8 +207,13 @@ export const TaskList = ( {
 	};
 
 	const getVisibleTasks = () => {
+		const nowTimestamp = Date.now();
 		return tasks.filter(
-			( task ) => task.visible && ! dismissedTasks.includes( task.key )
+			( task ) =>
+				task.visible &&
+				! dismissedTasks.includes( task.key ) &&
+				( ! remindMeLaterTasks[ task.key ] ||
+					remindMeLaterTasks[ task.key ] < nowTimestamp )
 		);
 	};
 
@@ -331,8 +341,16 @@ export const TaskList = ( {
 									completed={ task.completed }
 									content={ task.content }
 									onClick={ task.onClick }
-									isDismissable={ task.isDismissable }
-									onDismiss={ () => dismissTask( task ) }
+									onDismiss={
+										task.isDismissable
+											? () => dismissTask( task )
+											: undefined
+									}
+									remindMeLater={
+										task.allowRemindMeLater
+											? () => remindTaskLater( task )
+											: undefined
+									}
 									time={ task.time }
 									level={ task.level }
 								/>
