@@ -178,7 +178,7 @@ export const TaskList = ( {
 		);
 		const isCoreTaskList = name === 'task_list';
 		const taskListName = isCoreTaskList ? 'tasklist' : 'extended_tasklist';
-		recordEvent( `${ taskListName }_task_remindmelater`, {
+		recordEvent( `${ taskListName }_remindmelater_task`, {
 			task_name: key,
 		} );
 
@@ -277,6 +277,13 @@ export const TaskList = ( {
 	const listTasks = getVisibleTasks().map( ( task ) => {
 		if ( ! task.onClick ) {
 			task.onClick = ( e ) => {
+				const isCoreTaskList = name === 'task_list';
+				const taskListName = isCoreTaskList
+					? 'tasklist'
+					: 'extended_tasklist';
+				recordEvent( `${ taskListName }_click`, {
+					task_name: task.key,
+				} );
 				if ( e.target.nodeName === 'A' ) {
 					// This is a nested link, so don't activate this task.
 					return false;
