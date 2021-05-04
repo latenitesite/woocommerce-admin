@@ -16,6 +16,8 @@ import {
 	TaskItem,
 } from '@woocommerce/experimental';
 
+const DAY_IN_MS = 24 * 60 * 60 * 1000;
+
 export const TaskList = ( {
 	query,
 	name = 'task_list',
@@ -157,6 +159,45 @@ export const TaskList = ( {
 
 		updateOptions( {
 			woocommerce_task_list_dismissed_tasks: updatedDismissedTasks,
+		} );
+	};
+
+	const remindTaskLater = ( { key, onDismiss } ) => {
+		createNotice(
+			'success',
+			__( 'Task postponed until tomorrow', 'woocommerce-admin' ),
+			{
+				actions: [
+					{
+						label: __( 'Undo', 'woocommerce-admin' ),
+						onClick: () => undoRemindTaskLater( key ),
+					},
+				],
+			}
+		);
+		const isCoreTaskList = name === 'task_list';
+		const taskListName = isCoreTaskList ? 'tasklist' : 'extended_tasklist';
+		recordEvent( `${ taskListName }_task_remindmelater`, {
+			task_name: key,
+		} );
+
+		const dimissTime = Date.now() + DAY_IN_MS;
+		updateOptions( {
+			woocommerce_task_list_remind_me_later_tasks: {
+				...remindMeLaterTasks,
+				[ key ]: dismissTime,
+			},
+		} );
+		if ( onDismiss ) {
+			onDismiss();
+		}
+	};
+
+	const undoRemindTaskLater = ( key ) => {
+		const { [ key ]: _, ...updatedRemindMeLaterTasks } = remindMeLaterTasks;
+
+		updateOptions( {
+			woocommerce_task_list_remind_me_later_tasks: updatedRemindMeLaterTasks,
 		} );
 	};
 
