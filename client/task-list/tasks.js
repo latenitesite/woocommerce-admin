@@ -111,8 +111,13 @@ export function getAllTasks( {
 	const tasks = [
 		{
 			key: 'store_details',
-			title: __( 'Store details', 'woocommerce-admin' ),
+			title: __( 'Complete your store details', 'woocommerce-admin' ),
+			content: __(
+				'Your store address is required to set the origin country for shipping, currencies, and payment options.',
+				'woocommerce-admin'
+			),
 			container: null,
+			action: __( "Let's go", 'woocommerce-admin' ),
 			onClick: () => {
 				onTaskSelect( 'store_details' );
 				getHistory().push( getNewPath( {}, '/setup-wizard', {} ) );
@@ -125,6 +130,7 @@ export function getAllTasks( {
 		{
 			key: 'purchase',
 			title: purchaseAndInstallText,
+			content: __( '', 'woocommerce-admin' ),
 			container: null,
 			onClick: () => {
 				onTaskSelect( 'purchase' );
@@ -139,6 +145,10 @@ export function getAllTasks( {
 		{
 			key: 'products',
 			title: __( 'Add products', 'woocommerce-admin' ),
+			content: __(
+				'Start by adding the first product to your store. You can add your products manually, via CSV, or import them from another service.',
+				'woocommerce-admin'
+			),
 			container: <Products />,
 			onClick: () => {
 				onTaskSelect( 'products' );
@@ -202,6 +212,7 @@ export function getAllTasks( {
 		{
 			key: 'payments',
 			title: __( 'Choose payment methods', 'woocommerce-admin' ),
+			content: __( '', 'woocommerce-admin' ),
 			container: <Payments />,
 			completed: hasPaymentGateway,
 			onClick: () => {
@@ -218,7 +229,12 @@ export function getAllTasks( {
 		{
 			key: 'tax',
 			title: __( 'Add tax rates', 'woocommerce-admin' ),
+			content: __(
+				'Good news! WooCommerce Services and Jetpack can automate your sales tax calculations for you.',
+				'woocommerce-admin'
+			),
 			container: <Tax />,
+			action: __( 'Yes please', 'woocommerce-admin' ),
 			onClick: () => {
 				onTaskSelect( 'tax' );
 				updateQueryString( { task: 'tax' } );
@@ -230,8 +246,13 @@ export function getAllTasks( {
 		},
 		{
 			key: 'shipping',
-			title: __( 'Set up shipping costs', 'woocommerce-admin' ),
+			title: __( 'Add shipping costs', 'woocommerce-admin' ),
+			content: __(
+				"Set your store location and where you'll ship to.",
+				'woocommerce-admin'
+			),
 			container: <Shipping />,
+			action: __( "Let's go", 'woocommerce-admin' ),
 			onClick: () => {
 				if ( shippingZonesCount > 0 ) {
 					window.location = getLinkTypeAndHref( {
@@ -253,7 +274,12 @@ export function getAllTasks( {
 		{
 			key: 'appearance',
 			title: __( 'Personalize your store', 'woocommerce-admin' ),
+			content: __(
+				'Add your logo, create a homepage, and start designing your storefront.',
+				'woocommerce-admin'
+			),
 			container: <Appearance />,
+			action: __( "Let's go", 'woocommerce-admin' ),
 			onClick: () => {
 				onTaskSelect( 'appearance' );
 				updateQueryString( { task: 'appearance' } );
